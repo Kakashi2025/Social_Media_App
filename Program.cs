@@ -1,25 +1,37 @@
-var builder = WebApplication.CreateBuilder(args);
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+using System.Text.RegularExpressions;
+using WebApplicationSocialMediaApp;
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+namespace WebApplicationSocialMediaApp
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    public static class Program
+    {
+        public static void Main(string[] args)
+        {
+            //var target = new Uri(args[0]);
+            //var handler = new ClearanceHandler();
+            ////handler.MaxRetries = ClearanceHandler.DefaultMaxRetries;
+            //var client = new HttpClient(handler);
+
+            //try
+            //{
+            //    var content = client.GetStringAsync(target).Result;
+            //    var title = Regex.Match(content, "<title>(?<Title>[^<]+)").Groups["Title"].Value.Trim();
+            //    Console.WriteLine(title);
+            //}
+            //catch (AggregateException ex) when (ex.InnerException is CloudFlareClearanceException)
+            //{
+            //    Console.WriteLine(ex.InnerException.Message);
+            //}
+            CreateHostBuilder(args).Build().Run();
+        }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+    }
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();

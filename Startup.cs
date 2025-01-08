@@ -21,7 +21,15 @@ namespace WebApplicationSocialMediaApp
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddCors();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowReactApp", policy =>
+                {
+                    policy.WithOrigins("http://localhost:3000") // Replace with your React app's URL
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
             services.AddControllers();
             services.AddControllersWithViews();
 
@@ -100,35 +108,33 @@ namespace WebApplicationSocialMediaApp
             }
             else
             {
-                app.UseAuthorization();
-                app.UseAuthentication();
-                app.UseEndpoints(endpoints =>
-                {
-                    endpoints.MapControllers();
-                    endpoints.MapControllerRoute(
-                     name: "default",
-                     pattern: "{controller}/{action}"
-                    );
-
-                });
-
-                // Swagger Configuration in API
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("../swagger/v1/swagger.json", "SepStreamAPI v1");
-                    c.RoutePrefix = "swagger";
-                });
-
-                // global cors policy
-                app.UseCors(builder => builder
-               .AllowAnyHeader()
-               .AllowAnyMethod()
-               .SetIsOriginAllowed((host) => true)
-               .AllowCredentials()
-                );
+               
             }
 
+            app.UseAuthorization();
+            app.UseAuthentication();
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            
+            
+
+            // Swagger Configuration in API
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
+            // global cors policy
+            app.UseCors("AllowReactApp");
+
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+                 name: "default",
+                 pattern: "{controller}/{action}"
+                );
+
+            });
 
             app.UseHttpsRedirection();
 
